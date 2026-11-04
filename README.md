@@ -17,7 +17,13 @@ Raz, z głównego katalogu (buduje wszystko i uruchamia testy):
 mvn install
 ```
 
-Serwer (domyślnie port 5000, baza w `./data/justfit`):
+Serwer z oknem (start/stop, lista klientów, logi na żywo; baza w `./data/justfit`):
+
+```
+mvn -pl server javafx:run
+```
+
+Serwer bez okna, z konsoli (domyślnie port 5000):
 
 ```
 mvn -pl server exec:java
@@ -40,7 +46,7 @@ Logi: `logs/server.log` i `logs/client.log` (katalog, z którego uruchomiono apl
 | Moduł | Zawartość |
 |---|---|
 | `common` | model (`Member`), protokół (`Request`, `Response`, `Actions`), wspólny Gson |
-| `server` | `JustFitServer` (pętla accept + pula wątków), `ClientHandler`, `RequestHandler` (logika), `db/` (H2, DAO, BCrypt) |
+| `server` | `JustFitServer` (pętla accept + pula wątków), `ClientHandler`, `RequestHandler` (logika), `db/` (H2, DAO, BCrypt), `gui/` (okno serwera JavaFX) |
 | `client` | `JustFitApp` (JavaFX), `MemberService` (typowane wywołania), `ServerConnection` (gniazdo) |
 
 ## Protokół
@@ -53,10 +59,10 @@ każda akcja wymaga wcześniejszego zalogowania na tym samym połączeniu.
 ## Stan prac
 
 Zrobione: serwer wielowątkowy, baza i hasła BCrypt, logi, protokół, klient JavaFX
-(logowanie, lista, dodawanie, edycja, usuwanie członków z datą ważności karnetu), testy.
+(logowanie, lista, dodawanie, edycja, usuwanie członków z datą ważności karnetu),
+okno serwera (start/stop, lista klientów, logi na żywo), testy.
 
 Do zrobienia:
-- okno GUI serwera (start/stop, lista klientów, podgląd logów) — wymóg zadania
 - rejestracja obecności (wejścia na klub)
 - osobne konta/role (admin, recepcja), zmiana hasła
 - dokumentacja końcowa

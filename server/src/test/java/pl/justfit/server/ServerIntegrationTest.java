@@ -158,6 +158,34 @@ class ServerIntegrationTest {
     }
 
     @Test
+    void serverListsClientsWithTheirUsernames() throws Exception {
+        try (TestClient anonymous = new TestClient(server.getPort());
+             TestClient staff = new TestClient(server.getPort())) {
+            anonymous.send(Request.of(Actions.PING));
+            assertTrue(staff.login().isOk());
+
+            List<pl.justfit.server.ClientInfo> infos = server.getClients();
+            assertEquals(2, infos.size());
+            assertEquals(1, infos.stream().filter(i -> "admin".equals(i.username())).count());
+            assertEquals(1, infos.stream().filter(i -> i.username() == null).count());
+        }
+    }
+
+    @Test
+    void serverCanBeStoppedAndStartedAgain() throws Exception {
+        assertTrue(server.isRunning());
+        server.stop();
+        assertFalse(server.isRunning());
+        assertEquals(-1, server.getPort());
+
+        server.start();
+        assertTrue(server.isRunning());
+        try (TestClient client = new TestClient(server.getPort())) {
+            assertTrue(client.send(Request.of(Actions.PING)).isOk());
+        }
+    }
+
+    @Test
     void stopDisconnectsClients() throws Exception {
         TestClient client = new TestClient(server.getPort());
         client.send(Request.of(Actions.PING));

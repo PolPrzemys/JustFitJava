@@ -33,6 +33,15 @@ public class ClientHandler implements Runnable {
         this.onClose = onClose;
     }
 
+    public String getRemote() {
+        return remote;
+    }
+
+    /** Nazwa zalogowanego użytkownika albo null, gdy klient jeszcze się nie zalogował. */
+    public String getUsername() {
+        return handler.getUsername();
+    }
+
     @Override
     public void run() {
         log.info("Klient połączony: {}", remote);

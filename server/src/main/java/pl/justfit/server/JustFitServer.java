@@ -7,7 +7,8 @@ import pl.justfit.server.db.Database;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,7 +23,7 @@ public class JustFitServer {
 
     private final int requestedPort;
     private final Database database;
-    private final Set<Socket> clients = ConcurrentHashMap.newKeySet();
+    private final Map<Socket, ClientHandler> clients = new ConcurrentHashMap<>();
     private ExecutorService pool;
     private ServerSocket serverSocket;
     private Thread acceptThread;
@@ -44,6 +45,10 @@ public class JustFitServer {
         log.info("Serwer nasłuchuje na porcie {}", getPort());
     }
 
+    public synchronized boolean isRunning() {
+        return serverSocket != null;
+    }
+
     public synchronized int getPort() {
         return serverSocket == null ? -1 : serverSocket.getLocalPort();
     }
@@ -52,13 +57,21 @@ public class JustFitServer {
         return clients.size();
     }
 
+    /** Migawka połączonych klientów: adres i nazwa zalogowanego użytkownika (null, gdy jeszcze nie zalogowany). */
+    public List<ClientInfo> getClients() {
+        return clients.values().stream()
+                .map(handler -> new ClientInfo(handler.getRemote(), handler.getUsername()))
+                .toList();
+    }
+
     private void acceptLoop() {
         ServerSocket server = serverSocket;
         while (!server.isClosed()) {
             try {
                 Socket socket = server.accept();
-                clients.add(socket);
-                pool.execute(new ClientHandler(socket, database, () -> clients.remove(socket)));
+                ClientHandler handler = new ClientHandler(socket, database, () -> clients.remove(socket));
+                clients.put(socket, handler);
+                pool.execute(handler);
             } catch (IOException e) {
                 if (!server.isClosed()) {
                     log.error("Błąd przyjmowania połączenia", e);
@@ -77,7 +90,7 @@ public class JustFitServer {
         } catch (IOException e) {
             log.warn("Błąd zamykania gniazda serwera", e);
         }
-        for (Socket client : clients) {
+        for (Socket client : clients.keySet()) {
             try {
                 client.close();
             } catch (IOException ignored) {

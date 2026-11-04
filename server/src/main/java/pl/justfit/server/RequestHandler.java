@@ -24,7 +24,8 @@ public class RequestHandler {
 
     private final UserDao users;
     private final MemberDao members;
-    private String username;
+    /** volatile: odczytywane z wątku GUI serwera, zapisywane z wątku klienta. */
+    private volatile String username;
 
     public RequestHandler(Database database) {
         this.users = new UserDao(database);
