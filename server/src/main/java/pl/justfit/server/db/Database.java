@@ -55,6 +55,28 @@ public class Database {
                         membership_number VARCHAR(50) NOT NULL UNIQUE,
                         expiration_date DATE
                     )""");
+            statement.execute("""
+                    CREATE TABLE IF NOT EXISTS trainers (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL
+                    )""");
+            statement.execute("""
+                    CREATE TABLE IF NOT EXISTS class_sessions (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        title VARCHAR(255) NOT NULL,
+                        trainer_id BIGINT NOT NULL REFERENCES trainers(id),
+                        room VARCHAR(100) NOT NULL,
+                        start_time TIMESTAMP NOT NULL,
+                        capacity INT NOT NULL CHECK (capacity > 0)
+                    )""");
+            // usunięcie zajęć albo członka usuwa też jego zapisy
+            statement.execute("""
+                    CREATE TABLE IF NOT EXISTS bookings (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        session_id BIGINT NOT NULL REFERENCES class_sessions(id) ON DELETE CASCADE,
+                        member_id BIGINT NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+                        UNIQUE (session_id, member_id)
+                    )""");
         }
         UserDao users = new UserDao(this);
         if (users.count() == 0) {

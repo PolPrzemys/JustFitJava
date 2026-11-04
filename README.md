@@ -53,7 +53,9 @@ Logi: `logs/server.log` i `logs/client.log` (katalog, z którego uruchomiono apl
 
 Jedna linia = jeden komunikat JSON (UTF-8). Klient wysyła `{"action":"...","data":{...}}`,
 serwer odpowiada `{"ok":true|false,"error":"...","data":...}`. Akcje: `PING`, `LOGIN`,
-`LIST_MEMBERS`, `ADD_MEMBER`, `UPDATE_MEMBER`, `DELETE_MEMBER`. Poza `PING` i `LOGIN`
+`LIST_MEMBERS`, `ADD_MEMBER`, `UPDATE_MEMBER`, `DELETE_MEMBER`, a dla zajęć:
+`LIST_TRAINERS`, `ADD_TRAINER`, `DELETE_TRAINER`, `LIST_SESSIONS`, `ADD_SESSION`, `DELETE_SESSION`,
+`LIST_BOOKINGS`, `BOOK`, `CANCEL_BOOKING`. Poza `PING` i `LOGIN`
 każda akcja wymaga wcześniejszego zalogowania na tym samym połączeniu.
 
 ## Stan prac
@@ -62,7 +64,8 @@ Zrobione: serwer wielowątkowy, baza i hasła BCrypt, logi, protokół, klient J
 (logowanie, lista, dodawanie, edycja, usuwanie członków z datą ważności karnetu),
 okno serwera (start/stop, lista klientów, logi na żywo), testy.
 
+W trakcie: zapisy na zajęcia z trenerem (serwer gotowy, klient w przygotowaniu; szczegóły w `docs/POSTEP.md`).
+
 Do zrobienia:
-- rejestracja obecności (wejścia na klub)
 - osobne konta/role (admin, recepcja), zmiana hasła
 - dokumentacja końcowa

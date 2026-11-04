@@ -125,6 +125,63 @@ class ServerIntegrationTest {
     }
 
     @Test
+    void clientsRacingForLastSpotsOverSocketsNeverOverbook() throws Exception {
+        int capacity = 3;
+        int contenders = 10;
+        long sessionId;
+        long[] memberIds = new long[contenders];
+
+        // przygotowanie: jeden klient zakłada trenera, zajęcia i członków
+        try (TestClient setup = new TestClient(server.getPort())) {
+            assertTrue(setup.login().isOk());
+            long trainerId = setup.send(Request.of(Actions.ADD_TRAINER)
+                    .with("trainer", new pl.justfit.common.Trainer(0, "Anna Trener"))).data(pl.justfit.common.Trainer.class).getId();
+            pl.justfit.common.ClassSession session = new pl.justfit.common.ClassSession(0, "Joga", trainerId, null, "Sala A",
+                    java.time.LocalDateTime.now().plusDays(2).withNano(0).toString(), capacity, 0);
+            Response created = setup.send(Request.of(Actions.ADD_SESSION).with("session", session));
+            assertTrue(created.isOk(), created.getError());
+            sessionId = created.data(pl.justfit.common.ClassSession.class).getId();
+            for (int i = 0; i < contenders; i++) {
+                Member member = new Member(0, "Członek " + i, "S-" + i, java.time.LocalDate.now().plusYears(1).toString());
+                memberIds[i] = setup.send(Request.of(Actions.ADD_MEMBER).with("member", member)).data(Member.class).getId();
+            }
+        }
+
+        // wyścig: każdy klient próbuje zapisać innego członka na te same zajęcia
+        ExecutorService executor = Executors.newFixedThreadPool(contenders);
+        CountDownLatch allReady = new CountDownLatch(contenders);
+        List<Future<Boolean>> results = new ArrayList<>();
+        for (int i = 0; i < contenders; i++) {
+            long memberId = memberIds[i];
+            long session = sessionId;
+            results.add(executor.submit(() -> {
+                try (TestClient client = new TestClient(server.getPort())) {
+                    assertTrue(client.login().isOk());
+                    allReady.countDown();
+                    assertTrue(allReady.await(20, TimeUnit.SECONDS), "nie wszyscy klienci się połączyli");
+                    return client.send(Request.of(Actions.BOOK)
+                            .with("sessionId", session).with("memberId", memberId)).isOk();
+                }
+            }));
+        }
+
+        int succeeded = 0;
+        for (Future<Boolean> result : results) {
+            if (result.get(40, TimeUnit.SECONDS)) {
+                succeeded++;
+            }
+        }
+        executor.shutdown();
+        assertEquals(capacity, succeeded);
+
+        try (TestClient reader = new TestClient(server.getPort())) {
+            reader.login();
+            Response bookings = reader.send(Request.of(Actions.LIST_BOOKINGS).with("sessionId", sessionId));
+            assertEquals(capacity, bookings.data(pl.justfit.common.Booking[].class).length);
+        }
+    }
+
+    @Test
     void clientWithoutLoginIsRefusedWhileOthersWork() throws Exception {
         try (TestClient anonymous = new TestClient(server.getPort());
              TestClient staff = new TestClient(server.getPort())) {

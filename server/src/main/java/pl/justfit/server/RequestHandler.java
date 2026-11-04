@@ -6,6 +6,7 @@ import pl.justfit.common.Actions;
 import pl.justfit.common.Member;
 import pl.justfit.common.Request;
 import pl.justfit.common.Response;
+import pl.justfit.server.db.BusinessRuleException;
 import pl.justfit.server.db.Database;
 import pl.justfit.server.db.DuplicateMembershipNumberException;
 import pl.justfit.server.db.MemberDao;
@@ -24,12 +25,14 @@ public class RequestHandler {
 
     private final UserDao users;
     private final MemberDao members;
+    private final ClassHandler classes;
     /** volatile: odczytywane z wątku GUI serwera, zapisywane z wątku klienta. */
     private volatile String username;
 
     public RequestHandler(Database database) {
         this.users = new UserDao(database);
         this.members = new MemberDao(database);
+        this.classes = new ClassHandler(database);
     }
 
     public boolean isAuthenticated() {
@@ -61,8 +64,15 @@ public class RequestHandler {
                 case Actions.ADD_MEMBER -> addMember(request);
                 case Actions.UPDATE_MEMBER -> updateMember(request);
                 case Actions.DELETE_MEMBER -> deleteMember(request);
+                case Actions.LIST_TRAINERS, Actions.ADD_TRAINER, Actions.DELETE_TRAINER,
+                     Actions.LIST_SESSIONS, Actions.ADD_SESSION, Actions.DELETE_SESSION,
+                     Actions.LIST_BOOKINGS, Actions.BOOK, Actions.CANCEL_BOOKING ->
+                        classes.handle(request, username);
                 default -> Response.error("Nieznana akcja: " + action);
             };
+        } catch (BusinessRuleException e) {
+            log.info("Odrzucono akcję {}: {}", request.getAction(), e.getMessage());
+            return Response.error(e.getMessage());
         } catch (DuplicateMembershipNumberException e) {
             log.info("Konflikt numeru karnetu: {}", e.getMessage());
             return Response.error("Ten numer karnetu jest już używany");
