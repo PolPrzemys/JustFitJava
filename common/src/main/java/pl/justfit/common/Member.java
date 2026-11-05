@@ -64,6 +64,12 @@ public class Member {
         return LocalDate.parse(expirationDate);
     }
 
+    /** Tekst na listach wyboru, np. "Jan Kowalski (K-001)". */
+    @Override
+    public String toString() {
+        return name + " (" + membershipNumber + ")";
+    }
+
     /** Status do wyświetlenia w tabeli. */
     public String getStatus() {
         try {

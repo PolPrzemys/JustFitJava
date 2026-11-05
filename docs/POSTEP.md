@@ -36,7 +36,7 @@ obiekcie w `BookingDao`). Wystarcza, bo działa jeden proces serwera.
 |---|---|---|
 | 0 | szkielet: serwer, klient, baza, logi, testy, okno serwera | zrobione, zbudowane u autora |
 | A | serwer: trenerzy, zajęcia, zapisy (modele, tabele, DAO, `ClassHandler`, testy) | kod gotowy i wypchnięty; czeka na `mvn install` u autora |
-| B | klient: zakładki Członkowie / Zajęcia / Zapisy | do zrobienia |
+| B | klient: zakładki Członkowie / Zajęcia (z uczestnikami i zapisami) / Trenerzy | kod gotowy i wypchnięty; czeka na `mvn install` u autora |
 | C | stylowanie CSS (karty zajęć z paskiem zapełnienia, kolory statusów) | do zrobienia |
 | D | pliki `.jar` serwera i klienta (`java -jar`), skrypty startowe | do zrobienia |
 | E | dokumentacja, schemat architektury do obrony, README | do zrobienia |
@@ -70,3 +70,12 @@ Daty zajęć jako tekst ISO `RRRR-MM-DDTGG:MM`.
   (reguły i wyścig w bazie), `ClassHandlerTest` (przez protokół), wyścig przez gniazda w `ServerIntegrationTest`.
   Sprawdzone tutaj: kompilacja `common` + test dymny; reszta dopiero u autora (`git pull`, `mvn install`).
   Następny krok: B (klient), po potwierdzeniu, że A się buduje.
+- 2026-11-05: krok B: klient ma trzy zakładki. Zmiana względem planu: zapisy są w zakładce **Zajęcia**
+  (u góry grafik, pod spodem uczestnicy zaznaczonych zajęć, przyciski „Zapisz członka" i „Anuluj zapis"),
+  a trenerzy mają osobną zakładkę. Powód: prostszy przepływ i mniej kodu do obrony.
+  Nowe klasy klienta: `ClubService` (dawne `MemberService`, wszystkie wywołania serwera), `Ui` (wywołania
+  w tle, okna komunikatów, kolumny tabel), `MembersTab`, `SessionsTab`, `TrainersTab`, `Refreshable`.
+  `Member.toString()` w common (lista wyboru). Test `ClubServiceTest` rozszerzony o trenerów, zajęcia i zapisy.
+  Sprawdzone tutaj: kompilacja `common` i składnia klienta; reszta dopiero u autora.
+  Pomysły na później: wyszukiwarka w oknie wyboru członka (teraz zwykła lista rozwijana),
+  stylowanie w kroku C.

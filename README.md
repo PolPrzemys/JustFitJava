@@ -47,7 +47,7 @@ Logi: `logs/server.log` i `logs/client.log` (katalog, z którego uruchomiono apl
 |---|---|
 | `common` | model (`Member`), protokół (`Request`, `Response`, `Actions`), wspólny Gson |
 | `server` | `JustFitServer` (pętla accept + pula wątków), `ClientHandler`, `RequestHandler` (logika), `db/` (H2, DAO, BCrypt), `gui/` (okno serwera JavaFX) |
-| `client` | `JustFitApp` (JavaFX), `MemberService` (typowane wywołania), `ServerConnection` (gniazdo) |
+| `client` | `JustFitApp` (logowanie i zakładki), `MembersTab` / `SessionsTab` / `TrainersTab`, `ClubService` (typowane wywołania serwera), `Ui` (wywołania w tle, okna komunikatów), `ServerConnection` (gniazdo) |
 
 ## Protokół
 
@@ -64,7 +64,7 @@ Zrobione: serwer wielowątkowy, baza i hasła BCrypt, logi, protokół, klient J
 (logowanie, lista, dodawanie, edycja, usuwanie członków z datą ważności karnetu),
 okno serwera (start/stop, lista klientów, logi na żywo), testy.
 
-W trakcie: zapisy na zajęcia z trenerem (serwer gotowy, klient w przygotowaniu; szczegóły w `docs/POSTEP.md`).
+Zakładki klienta: Członkowie, Zajęcia (grafik, uczestnicy, zapisy i anulowanie) oraz Trenerzy. Plan dalszych prac jest w `docs/POSTEP.md`.
 
 Do zrobienia:
 - osobne konta/role (admin, recepcja), zmiana hasła
