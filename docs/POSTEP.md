@@ -37,7 +37,7 @@ obiekcie w `BookingDao`). Wystarcza, bo działa jeden proces serwera.
 | 0 | szkielet: serwer, klient, baza, logi, testy, okno serwera | zrobione, zbudowane u autora |
 | A | serwer: trenerzy, zajęcia, zapisy (modele, tabele, DAO, `ClassHandler`, testy) | kod gotowy i wypchnięty; czeka na `mvn install` u autora |
 | B | klient: zakładki Członkowie / Zajęcia (z uczestnikami i zapisami) / Trenerzy | kod gotowy i wypchnięty; czeka na `mvn install` u autora |
-| C | stylowanie CSS (karty zajęć z paskiem zapełnienia, kolory statusów) | do zrobienia |
+| C | stylowanie CSS (pasek zapełnienia zajęć, odznaki statusu, kafelki, nagłówek) | kod gotowy i wypchnięty; czeka na oględziny u autora |
 | D | pliki `.jar` serwera i klienta (`java -jar`), skrypty startowe | do zrobienia |
 | E | dokumentacja, schemat architektury do obrony, README | do zrobienia |
 
@@ -79,3 +79,10 @@ Daty zajęć jako tekst ISO `RRRR-MM-DDTGG:MM`.
   Sprawdzone tutaj: kompilacja `common` i składnia klienta; reszta dopiero u autora.
   Pomysły na później: wyszukiwarka w oknie wyboru członka (teraz zwykła lista rozwijana),
   stylowanie w kroku C.
+- 2026-11-05: krok C (wygląd): wspólny arkusz `common/src/main/resources/justfit.css` (kolory zdefiniowane raz
+  na `.root`), używany przez klienta i okno serwera. Klient: karta logowania na środku, ciemny nagłówek
+  z przyciskiem „Wyloguj", kafelki ze statystykami (`StatTile`), kolorowe odznaki statusu karnetu
+  (`Ui.badgeColumn`), pasek zapełnienia zajęć (zielony / pomarańczowy od 80% / czerwony gdy pełne),
+  przyciski „primary" i „danger", ostylowane okna dialogowe (`Ui.style`). Okno serwera w tym samym stylu.
+  Błędy w CSS JavaFX tylko loguje, więc aplikacja uruchomi się nawet z literówką w stylu.
+  Po zmianie CSS trzeba zrobić `mvn install` (CSS jest w module common).

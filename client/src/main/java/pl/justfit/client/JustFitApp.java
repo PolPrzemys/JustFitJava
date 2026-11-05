@@ -10,7 +10,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -58,17 +62,23 @@ public class JustFitApp extends Application {
         TextField user = new TextField("admin");
         PasswordField password = new PasswordField();
         Label status = new Label();
-        status.setStyle("-fx-text-fill: #b00020;");
+        status.getStyleClass().add("error-text");
+        status.setWrapText(true);
         Button login = new Button("Zaloguj");
+        login.getStyleClass().addAll("primary", "big");
         login.setDefaultButton(true);
+        login.setMaxWidth(Double.MAX_VALUE);
 
-        GridPane form = new GridPane();
-        form.setHgap(10);
-        form.setVgap(10);
-        form.addRow(0, new Label("Serwer"), host);
-        form.addRow(1, new Label("Port"), port);
-        form.addRow(2, new Label("Login"), user);
-        form.addRow(3, new Label("Hasło"), password);
+        Label title = new Label("JustFit");
+        title.getStyleClass().add("login-title");
+        Label subtitle = new Label("Panel recepcji klubu fitness");
+        subtitle.getStyleClass().add("muted");
+
+        VBox form = new VBox(6,
+                fieldLabel("Serwer"), host,
+                fieldLabel("Port"), port,
+                fieldLabel("Login"), user,
+                fieldLabel("Hasło"), password);
 
         login.setOnAction(e -> {
             int portNumber;
@@ -110,10 +120,25 @@ public class JustFitApp extends Application {
             thread.start();
         });
 
-        VBox root = new VBox(15, new Label("JustFit — logowanie"), form, login, status);
-        root.setPadding(new Insets(25));
-        root.setAlignment(Pos.CENTER_LEFT);
-        stage.setScene(new Scene(root, 360, 330));
+        VBox card = new VBox(16, title, subtitle, form, login, status);
+        card.getStyleClass().add("login-card");
+        card.setMaxWidth(380);
+        card.setMaxHeight(Region.USE_PREF_SIZE);
+
+        StackPane root = new StackPane(card);
+        root.setPadding(new Insets(30));
+        root.setAlignment(Pos.CENTER);
+
+        Scene scene = new Scene(root, 520, 640);
+        Ui.style(scene);
+        stage.setScene(scene);
+    }
+
+    private static Label fieldLabel(String text) {
+        Label label = new Label(text);
+        label.getStyleClass().add("field-label");
+        VBox.setMargin(label, new Insets(6, 0, 0, 0));
+        return label;
     }
 
     // ---------- główne okno z zakładkami ----------
@@ -132,7 +157,24 @@ public class JustFitApp extends Application {
             }
         });
 
-        stage.setScene(new Scene(tabs, 950, 620));
+        Label title = new Label("JustFit");
+        title.getStyleClass().add("app-title");
+        Label subtitle = new Label("Panel recepcji");
+        subtitle.getStyleClass().add("app-subtitle");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Button logout = new Button("Wyloguj");
+        logout.setOnAction(e -> showLogin());
+        HBox header = new HBox(14, new VBox(0, title, subtitle), spacer, logout);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.getStyleClass().add("app-header");
+
+        BorderPane root = new BorderPane(tabs);
+        root.setTop(header);
+
+        Scene scene = new Scene(root, 1040, 700);
+        Ui.style(scene);
+        stage.setScene(scene);
         stage.centerOnScreen();
         members.refresh();
     }

@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -23,6 +24,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +34,7 @@ import pl.justfit.server.JustFitServer;
 import pl.justfit.server.db.Database;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.function.Consumer;
 
 /**
@@ -70,13 +73,25 @@ public class ServerApp extends Application {
 
         portField.setPrefColumnCount(5);
         stopButton.setDisable(true);
+        startButton.getStyleClass().add("primary");
+        stopButton.getStyleClass().add("danger");
         startButton.setOnAction(e -> startServer());
         stopButton.setOnAction(e -> stopServer());
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox toolbar = new HBox(10, new Label("Port:"), portField, startButton, stopButton, spacer, statusLabel);
-        toolbar.setPadding(new Insets(10));
+        // nagłówek w tym samym stylu co w kliencie: nazwa po lewej, stan serwera po prawej
+        Label title = new Label("JustFit — serwer");
+        title.getStyleClass().add("app-title");
+        statusLabel.getStyleClass().add("app-subtitle");
+        Region headerSpacer = new Region();
+        HBox.setHgrow(headerSpacer, Priority.ALWAYS);
+        HBox header = new HBox(14, title, headerSpacer, statusLabel);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.getStyleClass().add("app-header");
+
+        HBox controls = new HBox(10, new Label("Port:"), portField, startButton, stopButton);
+        controls.setAlignment(Pos.CENTER_LEFT);
+        controls.setPadding(new Insets(14, 18, 8, 18));
+        VBox top = new VBox(header, controls);
 
         TableView<ClientInfo> table = new TableView<>(clients);
         table.getColumns().add(column("Adres klienta", 260, ClientInfo::address));
@@ -89,23 +104,32 @@ public class ServerApp extends Application {
         logArea.setWrapText(false);
         logArea.setStyle("-fx-font-family: 'monospace';");
 
-        SplitPane center = new SplitPane(table, logArea);
-        center.setOrientation(Orientation.VERTICAL);
-        center.setDividerPositions(0.35);
+        VBox clientsBox = new VBox(8, countLabel, table);
+        clientsBox.setPadding(new Insets(8, 18, 8, 18));
+        VBox.setVgrow(table, Priority.ALWAYS);
+        VBox logBox = new VBox(8, new Label("Dziennik zdarzeń"), logArea);
+        logBox.setPadding(new Insets(8, 18, 18, 18));
+        VBox.setVgrow(logArea, Priority.ALWAYS);
+        countLabel.getStyleClass().add("section-title");
 
-        HBox bottom = new HBox(countLabel);
-        bottom.setPadding(new Insets(6, 10, 6, 10));
+        SplitPane center = new SplitPane(clientsBox, logBox);
+        center.setOrientation(Orientation.VERTICAL);
+        center.setDividerPositions(0.38);
 
         BorderPane root = new BorderPane(center);
-        root.setTop(toolbar);
-        root.setBottom(bottom);
+        root.setTop(top);
 
         refresh = new Timeline(new KeyFrame(Duration.seconds(1), e -> refreshClients()));
         refresh.setCycleCount(Animation.INDEFINITE);
         refresh.play();
 
+        Scene scene = new Scene(root, 820, 600);
+        URL stylesheet = getClass().getResource("/justfit.css");
+        if (stylesheet != null) {
+            scene.getStylesheets().add(stylesheet.toExternalForm());
+        }
         stage.setTitle("JustFit — serwer");
-        stage.setScene(new Scene(root, 760, 520));
+        stage.setScene(scene);
         stage.show();
     }
 

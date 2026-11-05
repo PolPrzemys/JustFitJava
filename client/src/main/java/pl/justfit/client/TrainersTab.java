@@ -10,9 +10,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import pl.justfit.common.Trainer;
 
-/** Zakładka „Trenerzy”: lista trenerów, dodawanie i usuwanie (trener z zajęciami nie da się usunąć). */
+/** Zakładka „Trenerzy”: lista trenerów, dodawanie i usuwanie (trenera z zajęciami nie da się usunąć). */
 public class TrainersTab extends Tab implements Refreshable {
 
     private final ClubService service;
@@ -30,7 +33,9 @@ public class TrainersTab extends Tab implements Refreshable {
 
         Button refresh = new Button("Odśwież");
         Button add = new Button("Dodaj trenera");
+        add.getStyleClass().add("primary");
         Button delete = new Button("Usuń");
+        delete.getStyleClass().add("danger");
         delete.disableProperty().bind(table.getSelectionModel().selectedItemProperty().isNull());
 
         refresh.setOnAction(e -> refresh());
@@ -42,12 +47,14 @@ public class TrainersTab extends Tab implements Refreshable {
             }
         });
 
-        HBox toolbar = new HBox(10, refresh, add, delete);
-        toolbar.setPadding(new Insets(10));
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox toolbar = new HBox(10, add, delete, spacer, refresh);
 
-        BorderPane content = new BorderPane(table);
-        content.setTop(toolbar);
-        setContent(content);
+        VBox.setVgrow(table, Priority.ALWAYS);
+        VBox content = new VBox(14, toolbar, table);
+        content.setPadding(new Insets(18));
+        setContent(new BorderPane(content));
     }
 
     @Override
@@ -60,6 +67,7 @@ public class TrainersTab extends Tab implements Refreshable {
         dialog.setTitle("Nowy trener");
         dialog.setHeaderText(null);
         dialog.setContentText("Imię i nazwisko:");
+        Ui.style(dialog);
         dialog.showAndWait().map(String::trim).filter(name -> !name.isEmpty()).ifPresent(name ->
                 Ui.run(() -> service.addTrainer(new Trainer(0, name)), saved -> refresh()));
     }

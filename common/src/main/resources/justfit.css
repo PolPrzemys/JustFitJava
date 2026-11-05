@@ -1,0 +1,415 @@
+/*
+ * Wspólny wygląd aplikacji JustFit (klient i okno serwera).
+ * Kolory są zdefiniowane raz, na .root, i używane niżej przez nazwę (-jf-...).
+ * Błędy w tym pliku JavaFX tylko loguje, więc aplikacja i tak się uruchomi.
+ */
+
+.root {
+    -jf-primary: #4f46e5;
+    -jf-primary-dark: #4338ca;
+    -jf-primary-soft: #e0e7ff;
+    -jf-good: #15803d;
+    -jf-good-soft: #dcfce7;
+    -jf-warn: #b45309;
+    -jf-warn-soft: #fef3c7;
+    -jf-bad: #b91c1c;
+    -jf-bad-soft: #fee2e2;
+    -jf-text: #1f2937;
+    -jf-muted: #6b7280;
+    -jf-line: #e5e7eb;
+    -jf-bg: #f3f4f8;
+
+    /* kolory systemowe Modeny: zaznaczenia, fokus */
+    -fx-accent: -jf-primary;
+    -fx-focus-color: -jf-primary;
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: -jf-bg;
+    -fx-font-size: 13px;
+}
+
+.label {
+    -fx-text-fill: -jf-text;
+}
+
+.muted {
+    -fx-text-fill: -jf-muted;
+}
+
+.error-text {
+    -fx-text-fill: -jf-bad;
+}
+
+/* ---------- nagłówek aplikacji ---------- */
+
+.app-header {
+    -fx-background-color: #111827;
+    -fx-padding: 12 22;
+}
+
+.app-title {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.app-subtitle {
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 12px;
+}
+
+.app-header .button {
+    -fx-background-color: transparent;
+    -fx-border-color: #4b5563;
+    -fx-text-fill: white;
+}
+
+.app-header .button:hover {
+    -fx-background-color: #1f2937;
+}
+
+/* ---------- logowanie ---------- */
+
+.login-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(17, 24, 39, 0.14), 28, 0.1, 0, 8);
+}
+
+.login-title {
+    -fx-text-fill: -jf-primary;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
+.field-label {
+    -fx-text-fill: -jf-muted;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- przyciski ---------- */
+
+.button {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: -jf-line;
+    -fx-border-radius: 8;
+    -fx-padding: 7 16;
+    -fx-text-fill: -jf-text;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #f9fafb;
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
+}
+
+.button.primary {
+    -fx-background-color: -jf-primary;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button.primary:hover {
+    -fx-background-color: -jf-primary-dark;
+}
+
+.button.primary .text {
+    -fx-fill: white;
+}
+
+.button.danger {
+    -fx-text-fill: -jf-bad;
+    -fx-border-color: #fca5a5;
+}
+
+.button.danger:hover {
+    -fx-background-color: -jf-bad-soft;
+}
+
+.button.big {
+    -fx-font-size: 15px;
+    -fx-padding: 14 22;
+}
+
+/* ---------- pola formularzy ---------- */
+
+.text-field,
+.password-field {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: -jf-line;
+    -fx-border-radius: 8;
+    -fx-padding: 8 10;
+}
+
+.text-field:focused,
+.password-field:focused {
+    -fx-border-color: -jf-primary;
+}
+
+.combo-box-base,
+.date-picker,
+.spinner {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: -jf-line;
+    -fx-border-radius: 8;
+}
+
+.combo-box-base:focused,
+.date-picker:focused,
+.spinner:focused {
+    -fx-border-color: -jf-primary;
+}
+
+/* pole tekstowe wewnątrz listy rozwijanej, kalendarza i spinnera nie dostaje drugiej ramki */
+.combo-box-base .text-field,
+.date-picker .text-field,
+.spinner .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* ---------- zakładki ---------- */
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(17, 24, 39, 0.06), 6, 0, 0, 2);
+}
+
+.tab-pane > .tab-header-area {
+    -fx-padding: 0 0 0 14;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 8 20;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-border-color: transparent transparent -jf-primary transparent;
+    -fx-border-width: 0 0 3 0;
+}
+
+.tab .tab-label {
+    -fx-text-fill: -jf-muted;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: -jf-primary;
+}
+
+.tab-pane {
+    -fx-background-color: transparent;
+}
+
+/* ---------- tabele ---------- */
+
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: -jf-line;
+    -fx-border-radius: 10;
+    -fx-padding: 1;
+    -fx-selection-bar: -jf-primary-soft;
+    -fx-selection-bar-non-focused: #eef2ff;
+    -fx-selection-bar-text: -jf-text;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f9fafb;
+    -fx-background-radius: 10 10 0 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 38px;
+    -fx-border-color: transparent transparent -jf-line transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -jf-muted;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-cell-size: 42px;
+    -fx-border-color: transparent transparent -jf-line transparent;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: -jf-primary-soft;
+}
+
+.table-cell {
+    -fx-padding: 0 10;
+    -fx-alignment: center-left;
+    -fx-text-fill: -jf-text;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: -jf-text;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: -jf-muted;
+}
+
+/* ---------- odznaki statusu ---------- */
+
+.badge {
+    -fx-background-radius: 999;
+    -fx-padding: 3 11;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.badge-good {
+    -fx-background-color: -jf-good-soft;
+    -fx-text-fill: -jf-good;
+}
+
+.badge-warn {
+    -fx-background-color: -jf-warn-soft;
+    -fx-text-fill: -jf-warn;
+}
+
+.badge-bad {
+    -fx-background-color: -jf-bad-soft;
+    -fx-text-fill: -jf-bad;
+}
+
+.badge-muted {
+    -fx-background-color: #f3f4f6;
+    -fx-text-fill: -jf-muted;
+}
+
+/* ---------- pasek zapełnienia zajęć ---------- */
+
+.progress-bar {
+    -fx-pref-height: 8;
+    -fx-min-height: 8;
+    -fx-max-height: 8;
+}
+
+.progress-bar > .track {
+    -fx-background-color: #e5e7eb;
+    -fx-background-radius: 999;
+    -fx-background-insets: 0;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: -fx-accent;
+    -fx-background-radius: 999;
+    -fx-background-insets: 0;
+    -fx-padding: 4;
+}
+
+.progress-bar.bar-ok {
+    -fx-accent: -jf-good;
+}
+
+.progress-bar.bar-warn {
+    -fx-accent: #d97706;
+}
+
+.progress-bar.bar-full {
+    -fx-accent: -jf-bad;
+}
+
+/* ---------- kafelki ze statystykami ---------- */
+
+.stat-tile {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: -jf-line;
+    -fx-border-radius: 12;
+    -fx-padding: 12 20;
+    -fx-min-width: 140;
+}
+
+.stat-value {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.stat-neutral {
+    -fx-text-fill: -jf-text;
+}
+
+.stat-good {
+    -fx-text-fill: -jf-good;
+}
+
+.stat-bad {
+    -fx-text-fill: -jf-bad;
+}
+
+.stat-accent {
+    -fx-text-fill: -jf-primary;
+}
+
+.stat-caption {
+    -fx-text-fill: -jf-muted;
+    -fx-font-size: 12px;
+}
+
+.section-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- okna dialogowe, listy, podział ---------- */
+
+.dialog-pane {
+    -fx-background-color: white;
+}
+
+.dialog-pane > .content {
+    -fx-padding: 6;
+}
+
+.dialog-pane:header .header-panel {
+    -fx-background-color: -jf-primary-soft;
+}
+
+.list-view {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: -jf-line;
+    -fx-border-radius: 8;
+}
+
+.split-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: transparent;
+}
+
+.text-area {
+    -fx-background-radius: 8;
+    -fx-border-color: -jf-line;
+    -fx-border-radius: 8;
+}
+
+.text-area .content {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+}
