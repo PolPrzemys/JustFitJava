@@ -89,4 +89,14 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <!-- Jeden plik do uruchamiania: mvn -Pdist package, wynik w dist/target/justfit.jar -->
+        <profile>
+            <id>dist</id>
+            <modules>
+                <module>dist</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

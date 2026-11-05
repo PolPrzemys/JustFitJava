@@ -38,7 +38,7 @@ obiekcie w `BookingDao`). Wystarcza, bo działa jeden proces serwera.
 | A | serwer: trenerzy, zajęcia, zapisy (modele, tabele, DAO, `ClassHandler`, testy) | kod gotowy i wypchnięty; czeka na `mvn install` u autora |
 | B | klient: zakładki Członkowie / Zajęcia (z uczestnikami i zapisami) / Trenerzy | kod gotowy i wypchnięty; czeka na `mvn install` u autora |
 | C | stylowanie CSS (pasek zapełnienia zajęć, odznaki statusu, kafelki, nagłówek) | kod gotowy i wypchnięty; czeka na oględziny u autora |
-| D | pliki `.jar` serwera i klienta (`java -jar`), skrypty startowe | do zrobienia |
+| D | jeden plik `justfit.jar` (`java -jar`), moduł `dist` w profilu `-Pdist` | kod gotowy i wypchnięty; czeka na `mvn -Pdist package` u autora |
 | E | dokumentacja, schemat architektury do obrony, README | do zrobienia |
 
 ## Protokół (dodatki w kroku A)
@@ -86,3 +86,12 @@ Daty zajęć jako tekst ISO `RRRR-MM-DDTGG:MM`.
   przyciski „primary" i „danger", ostylowane okna dialogowe (`Ui.style`). Okno serwera w tym samym stylu.
   Błędy w CSS JavaFX tylko loguje, więc aplikacja uruchomi się nawet z literówką w stylu.
   Po zmianie CSS trzeba zrobić `mvn install` (CSS jest w module common).
+- 2026-11-05: krok D (jeden plik): moduł `dist`, budowany tylko w profilu `-Pdist`, żeby zwykły `mvn install`
+  nie mógł się przez niego wywrócić. `mvn -Pdist package` daje `dist/target/justfit.jar` (maven-shade-plugin).
+  `Launcher` (zwykła klasa z `main`, bo JavaFX z jednego jara wymaga klasy niebędącej `Application`):
+  bez argumentów otwiera `ChooserApp` (dwa przyciski, każdy uruchamia ten sam jar jako osobny proces),
+  z argumentem `server` lub `client` uruchamia od razu dane okno. Logi: `dist/src/main/resources/log4j2.xml`
+  z nazwą pliku zależną od właściwości `justfit.app` (logs/server.log, logs/client.log); konfiguracje z modułów
+  server i client są z jara wykluczone. W jarze są natywne biblioteki JavaFX dla win, linux i mac-aarch64
+  (Mac z Intelem: zmienić classifier w `dist/pom.xml`). NIE sprawdzone tutaj (brak dostępu do bibliotek),
+  więc to pierwszy punkt do przetestowania u autora.

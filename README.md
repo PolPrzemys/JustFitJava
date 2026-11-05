@@ -36,6 +36,29 @@ Klient (w osobnym terminalu, można uruchomić wiele naraz):
 mvn -pl client javafx:run
 ```
 
+## Uruchomienie z jednego pliku (justfit.jar)
+
+Cała aplikacja (serwer, klient i wszystkie biblioteki) może być spakowana w jeden plik.
+Budowanie, raz, z głównego folderu:
+
+```
+mvn -Pdist package
+```
+
+Wynik: `dist/target/justfit.jar`. Do uruchomienia na dowolnym komputerze wystarczy **Java 21**
+i ten jeden plik (nie trzeba Mavena ani IDE):
+
+```
+java -jar justfit.jar            # okno z dwoma przyciskami: serwer / klient (albo dwuklik na pliku)
+java -jar justfit.jar server     # od razu okno serwera
+java -jar justfit.jar client     # od razu okno klienta
+```
+
+Serwer i klient startują jako osobne procesy. Baza (`data/`) i logi (`logs/`) powstają w folderze,
+z którego uruchomiono plik. Plik zawiera biblioteki JavaFX dla Windowsa, Linuxa i macOS z procesorem
+Apple (M1 i nowsze). Dla Maca z procesorem Intela w `dist/pom.xml` trzeba zamienić classifier
+`mac-aarch64` na `mac` i zbudować plik ponownie.
+
 Domyślne konto: **admin / admin123** (tworzone przy pierwszym starcie na pustej bazie).
 Zmień to hasło przed pokazaniem projektu jako gotowego.
 
@@ -46,6 +69,7 @@ Logi: `logs/server.log` i `logs/client.log` (katalog, z którego uruchomiono apl
 | Moduł | Zawartość |
 |---|---|
 | `common` | model (`Member`), protokół (`Request`, `Response`, `Actions`), wspólny Gson |
+| `dist` | (opcjonalny, profil `-Pdist`) `Launcher` i okno wyboru; pakuje całość w `justfit.jar` |
 | `server` | `JustFitServer` (pętla accept + pula wątków), `ClientHandler`, `RequestHandler` (logika), `db/` (H2, DAO, BCrypt), `gui/` (okno serwera JavaFX) |
 | `client` | `JustFitApp` (logowanie i zakładki), `MembersTab` / `SessionsTab` / `TrainersTab`, `ClubService` (typowane wywołania serwera), `Ui` (wywołania w tle, okna komunikatów), `ServerConnection` (gniazdo) |
 
