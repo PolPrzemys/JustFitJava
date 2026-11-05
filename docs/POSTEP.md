@@ -39,7 +39,7 @@ obiekcie w `BookingDao`). Wystarcza, bo działa jeden proces serwera.
 | B | klient: zakładki Członkowie / Zajęcia (z uczestnikami i zapisami) / Trenerzy | kod gotowy i wypchnięty; czeka na `mvn install` u autora |
 | C | stylowanie CSS (pasek zapełnienia zajęć, odznaki statusu, kafelki, nagłówek) | kod gotowy i wypchnięty; czeka na oględziny u autora |
 | D | jeden plik `justfit.jar` (`java -jar`), moduł `dist` w profilu `-Pdist` | kod gotowy i wypchnięty; czeka na `mvn -Pdist package` u autora |
-| E | dokumentacja, schemat architektury do obrony, README | do zrobienia |
+| E | dokumentacja, schemat architektury do obrony, README | zrobione (`docs/ARCHITEKTURA.md`), do przeglądu u autora |
 
 ## Protokół (dodatki w kroku A)
 
@@ -95,3 +95,6 @@ Daty zajęć jako tekst ISO `RRRR-MM-DDTGG:MM`.
   server i client są z jara wykluczone. W jarze są natywne biblioteki JavaFX dla win, linux i mac-aarch64
   (Mac z Intelem: zmienić classifier w `dist/pom.xml`). NIE sprawdzone tutaj (brak dostępu do bibliotek),
   więc to pierwszy punkt do przetestowania u autora.
+- 2026-11-06: krok E: `docs/ARCHITEKTURA.md` (schemat Mermaid, przepływ zapisu, pytania do obrony). Wyszukiwarka członka
+  przy zapisie (`SessionsTab.pickMember`: okno z polem filtru i listą). NIE sprawdzone tutaj (brak JavaFX).
+  Czekamy na wynik `mvn install`, wygląd okien i `mvn -Pdist package` u autora.

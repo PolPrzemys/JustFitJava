@@ -70,6 +70,7 @@ Logi: `logs/server.log` i `logs/client.log` (katalog, z którego uruchomiono apl
 |---|---|
 | `common` | model (`Member`), protokół (`Request`, `Response`, `Actions`), wspólny Gson |
 | `dist` | (opcjonalny, profil `-Pdist`) `Launcher` i okno wyboru; pakuje całość w `justfit.jar` |
+| `docs/` | `POSTEP.md` (notatki postępu), `ARCHITEKTURA.md` (schemat i pytania do obrony) |
 | `server` | `JustFitServer` (pętla accept + pula wątków), `ClientHandler`, `RequestHandler` (logika), `db/` (H2, DAO, BCrypt), `gui/` (okno serwera JavaFX) |
 | `client` | `JustFitApp` (logowanie i zakładki), `MembersTab` / `SessionsTab` / `TrainersTab`, `ClubService` (typowane wywołania serwera), `Ui` (wywołania w tle, okna komunikatów), `ServerConnection` (gniazdo) |
 

@@ -1,19 +1,22 @@
 package pl.justfit.client;
 
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SplitPane;
@@ -299,14 +302,45 @@ public class SessionsTab extends Tab implements Refreshable {
                 Ui.info("Brak członków. Dodaj członka w zakładce „Członkowie”.");
                 return;
             }
-            ChoiceDialog<Member> dialog = new ChoiceDialog<>(members.get(0), members);
-            dialog.setTitle("Zapis na zajęcia");
-            dialog.setHeaderText(session.getTitle() + ", " + when(session));
-            dialog.setContentText("Członek:");
-            Ui.style(dialog);
-            dialog.showAndWait().ifPresent(member ->
+            pickMember(session, members).ifPresent(member ->
                     Ui.run(() -> service.book(session.getId(), member.getId()), booking -> reload()));
         });
+    }
+
+    /** Okno wyboru członka: pole wyszukiwania filtruje listę po imieniu lub numerze karnetu. */
+    private Optional<Member> pickMember(ClassSession session, List<Member> members) {
+        Dialog<Member> dialog = new Dialog<>();
+        dialog.setTitle("Zapis na zajęcia");
+        dialog.setHeaderText(session.getTitle() + ", " + when(session));
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        TextField search = new TextField();
+        search.setPromptText("Szukaj: imię, nazwisko lub numer karnetu");
+        FilteredList<Member> filtered = new FilteredList<>(FXCollections.observableArrayList(members));
+        ListView<Member> list = new ListView<>(filtered);
+        list.setPrefHeight(240);
+        list.getSelectionModel().selectFirst();
+        search.textProperty().addListener((obs, old, text) -> {
+            String q = text.trim().toLowerCase();
+            filtered.setPredicate(m -> m.toString().toLowerCase().contains(q));
+            list.getSelectionModel().selectFirst();
+        });
+        // podwójne kliknięcie = zatwierdź
+        list.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2 && list.getSelectionModel().getSelectedItem() != null) {
+                dialog.setResult(list.getSelectionModel().getSelectedItem());
+                dialog.close();
+            }
+        });
+
+        dialog.getDialogPane().setContent(new VBox(8, search, list));
+        Node ok = dialog.getDialogPane().lookupButton(ButtonType.OK);
+        ok.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
+        dialog.setResultConverter(button ->
+                button == ButtonType.OK ? list.getSelectionModel().getSelectedItem() : null);
+        Ui.style(dialog);
+        Platform.runLater(search::requestFocus);
+        return dialog.showAndWait();
     }
 
     private void cancelBooking() {
