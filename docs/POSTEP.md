@@ -98,3 +98,5 @@ Daty zajęć jako tekst ISO `RRRR-MM-DDTGG:MM`.
 - 2026-11-06: krok E: `docs/ARCHITEKTURA.md` (schemat Mermaid, przepływ zapisu, pytania do obrony). Wyszukiwarka członka
   przy zapisie (`SessionsTab.pickMember`: okno z polem filtru i listą). NIE sprawdzone tutaj (brak JavaFX).
   Czekamy na wynik `mvn install`, wygląd okien i `mvn -Pdist package` u autora.
+- 2026-11-08: projekt UI/UX dla prowadzącego (zadanie: wireframes, styl, mapa ekranów): `docs/ui/JustFit_UI_wireframes.drawio`
+  (draw.io, 4 strony: styl, ekrany, okna dialogowe, mapa przejść). Odzwierciedla faktyczny wygląd aplikacji.
